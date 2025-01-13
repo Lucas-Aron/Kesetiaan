@@ -1,11 +1,15 @@
 import streamlit as st
 
+# Cek apakah session_state untuk members sudah ada, jika belum, inisialisasi
+if 'members' not in st.session_state:
+    st.session_state.members = {}
+
 class Member:
     def __init__(self, nama, email):
         self.nama = nama
         self.email = email
         self.poin_loyalty = 0
-        self.riwayat_penukaran = []  # Menyimpan riwayat penukaran poin
+        self.riwayat_penukaran = []
 
     def tambah_poin(self, pembelian):
         poin_ditambah = pembelian // 100 * 10
@@ -14,7 +18,7 @@ class Member:
     def tukar_poin(self, jumlah_poin):
         if self.poin_loyalty >= jumlah_poin:
             self.poin_loyalty -= jumlah_poin
-            self.riwayat_penukaran.append(jumlah_poin)  # Simpan riwayat penukaran
+            self.riwayat_penukaran.append(jumlah_poin)
         else:
             return False
         return True
@@ -28,7 +32,7 @@ class Member:
 
 class SistemPendaftaran:
     def __init__(self):
-        self.members = {}
+        self.members = st.session_state.members
 
     def daftar_member(self, nama, email):
         if email in self.members:

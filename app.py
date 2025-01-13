@@ -5,6 +5,7 @@ class Member:
         self.nama = nama
         self.email = email
         self.poin_loyalty = 0
+        self.riwayat_penukaran = []  # Menyimpan riwayat penukaran poin
 
     def tambah_poin(self, pembelian):
         poin_ditambah = pembelian // 100 * 10
@@ -13,12 +14,16 @@ class Member:
     def tukar_poin(self, jumlah_poin):
         if self.poin_loyalty >= jumlah_poin:
             self.poin_loyalty -= jumlah_poin
+            self.riwayat_penukaran.append(jumlah_poin)  # Simpan riwayat penukaran
         else:
             return False
         return True
 
     def info_member(self):
         return f"Nama: {self.nama}\nEmail: {self.email}\nPoin Loyalty: {self.poin_loyalty}"
+
+    def riwayat_penukaran_poin(self):
+        return self.riwayat_penukaran if self.riwayat_penukaran else "Tidak ada riwayat penukaran."
 
 
 class SistemPendaftaran:
@@ -39,6 +44,12 @@ class SistemPendaftaran:
         else:
             return "Member tidak ditemukan."
 
+    def list_member(self):
+        if self.members:
+            return [member.nama for member in self.members.values()]
+        else:
+            return "Tidak ada member terdaftar."
+
 
 # Inisialisasi sistem pendaftaran
 sistem = SistemPendaftaran()
@@ -47,7 +58,7 @@ sistem = SistemPendaftaran()
 st.title("Sistem Pendaftaran Membership dan Loyalty")
 
 # Menu utama untuk memilih tindakan
-menu = st.sidebar.selectbox("Pilih Tindakan", ["Daftar Member", "Lihat Info Member", "Pembelian & Loyalty", "Tukar Poin"])
+menu = st.sidebar.selectbox("Pilih Tindakan", ["Daftar Member", "Lihat Info Member", "Pembelian & Loyalty", "Tukar Poin", "List Member", "Riwayat Penukaran Poin"])
 
 # Daftar Member
 if menu == "Daftar Member":
@@ -101,5 +112,34 @@ elif menu == "Tukar Poin":
                 st.success(f"{member.nama} berhasil menukar {jumlah_poin} poin loyalty.")
             else:
                 st.warning("Poin tidak cukup untuk ditukarkan.")
+        else:
+            st.warning("Email tidak terdaftar sebagai member.")
+
+# List Member
+elif menu == "List Member":
+    st.subheader("Daftar Member Terdaftar")
+    members_list = sistem.list_member()
+    if isinstance(members_list, list) and members_list:
+        st.write("Daftar Member:")
+        for member in members_list:
+            st.write(f"- {member}")
+    else:
+        st.write("Tidak ada member terdaftar.")
+
+# Riwayat Penukaran Poin
+elif menu == "Riwayat Penukaran Poin":
+    st.subheader("Riwayat Penukaran Poin")
+    email = st.text_input("Email Member")
+    
+    if st.button("Tampilkan Riwayat Penukaran"):
+        if email in sistem.members:
+            member = sistem.members[email]
+            riwayat = member.riwayat_penukaran_poin()
+            st.write(f"Riwayat Penukaran Poin untuk {member.nama}:")
+            if isinstance(riwayat, list) and riwayat:
+                for poin in riwayat:
+                    st.write(f"- {poin} poin")
+            else:
+                st.write(riwayat)
         else:
             st.warning("Email tidak terdaftar sebagai member.")

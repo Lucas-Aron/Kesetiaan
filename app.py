@@ -14,11 +14,12 @@ class Member:
     def tambah_poin(self, pembelian):
         poin_ditambah = pembelian // 100 * 10
         self.poin_loyalty += poin_ditambah
+        self.riwayat_penukaran.append(f"Menambah {poin_ditambah} poin dari pembelian Rp{pembelian}")
 
     def tukar_poin(self, jumlah_poin):
         if self.poin_loyalty >= jumlah_poin:
             self.poin_loyalty -= jumlah_poin
-            self.riwayat_penukaran.append(jumlah_poin)
+            self.riwayat_penukaran.append(f"Menukar {jumlah_poin} poin")
         else:
             return False
         return True
@@ -50,7 +51,7 @@ class SistemPendaftaran:
 
     def list_member(self):
         if self.members:
-            return [member.nama for member in self.members.values()]
+            return [(member.nama, member.email, member.poin_loyalty) for member in self.members.values()]
         else:
             return "Tidak ada member terdaftar."
 
@@ -126,7 +127,7 @@ elif menu == "List Member":
     if isinstance(members_list, list) and members_list:
         st.write("Daftar Member:")
         for member in members_list:
-            st.write(f"- {member}")
+            st.write(f"- Nama: {member[0]}, Email: {member[1]}, Poin: {member[2]}")
     else:
         st.write("Tidak ada member terdaftar.")
 
@@ -141,8 +142,8 @@ elif menu == "Riwayat Penukaran Poin":
             riwayat = member.riwayat_penukaran_poin()
             st.write(f"Riwayat Penukaran Poin untuk {member.nama}:")
             if isinstance(riwayat, list) and riwayat:
-                for poin in riwayat:
-                    st.write(f"- {poin} poin")
+                for transaksi in riwayat:
+                    st.write(f"- {transaksi}")
             else:
                 st.write(riwayat)
         else:

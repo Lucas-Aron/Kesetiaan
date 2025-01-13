@@ -14,11 +14,13 @@ class Member:
     def tambah_poin(self, pembelian):
         poin_ditambah = pembelian // 100 * 10
         self.poin_loyalty += poin_ditambah
+        # Menambahkan riwayat penambahan poin
         self.riwayat_penukaran.append(f"Menambah {poin_ditambah} poin dari pembelian Rp{pembelian}")
 
     def tukar_poin(self, jumlah_poin):
         if self.poin_loyalty >= jumlah_poin:
             self.poin_loyalty -= jumlah_poin
+            # Menambahkan riwayat penukaran poin
             self.riwayat_penukaran.append(f"Menukar {jumlah_poin} poin")
         else:
             return False
@@ -28,7 +30,7 @@ class Member:
         return f"Nama: {self.nama}\nEmail: {self.email}\nPoin Loyalty: {self.poin_loyalty}"
 
     def riwayat_penukaran_poin(self):
-        return self.riwayat_penukaran if self.riwayat_penukaran else "Tidak ada riwayat penukaran."
+        return self.riwayat_penukaran if self.riwayat_penukaran else ["Tidak ada riwayat penukaran."]
 
 
 class SistemPendaftaran:
